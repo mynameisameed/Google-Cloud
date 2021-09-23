@@ -1,14 +1,12 @@
-FROM centos:centos7
-MAINTAINER msun_007_1@yahoo.com
+FROM ubuntu:19.10
 
-RUN yum -y update &&\
-    yum clean all
+RUN dpkg --add-architecture i386
 
-RUN yum -y install httpd php php-mysql php-gd openssl psmisc tar &&\
-    yum clean all
+RUN apt update && apt install -y \
+    wine \
+    winetricks \
+ && rm -rf /var/lib/apt/lists/*
 
-ADD scripts /scripts
-RUN curl -LO http://wordpress.org/latest.tar.gz                         &&\
-    tar xvzf /latest.tar.gz -C /var/www/html --strip-components=1       &&\
-    rm /latest.tar.gz                                                   &&\
-    chown -R apache:apache /var/www/                                    &&\
+RUN useradd -m -s /bin/bash wineuser
+
+USER wineuser
